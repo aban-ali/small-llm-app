@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Q&A</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            height: 60px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #submit {
+            padding: 10px 20px;
+        }
+        #answer {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>OpenAI Q&A</h1>
+    <input type="password" id="apiKey" placeholder="Enter your OpenAI API Key">
+    <input type="text" id="question" placeholder="Enter your question">
+    <button id="submit">Ask</button>
+    <div id="answer"></div>
+
+    <script>
+        const apiKeyInput = document.getElementById('apiKey');
+        const questionInput = document.getElementById('question');
+        const submitButton = document.getElementById('submit');
+        const answerDiv = document.getElementById('answer');
+
+        submitButton.addEventListener('click', async () => {
+            const apiKey = apiKeyInput.value.trim();
+            const question = questionInput.value.trim();
+            if (!apiKey || !question) {
+                answerDiv.textContent = 'Please provide both an API key and a question.';
+                return;
+            }
+
+            answerDiv.textContent = 'Thinking...';
+
+            try {
+                const response = await fetch('https://436d-103-211-19-82.ngrok-free.app/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ apiKey, question }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    answerDiv.textContent = data.answer;
+                } else {
+                    answerDiv.textContent = `Error: ${data.error}`;
+                }
+            } catch (error) {
+                answerDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
